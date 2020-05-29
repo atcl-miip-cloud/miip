@@ -9,7 +9,7 @@ rm -f *.tfstate*
 
 - 실행
 ```
-export PROJECT_NAME="skcc-aws-general"
+export PROJECT_NAME="miip-aws-general"
 export KUBECONFIG="kubeconfig_${PROJECT_NAME}"
 
 terraform init  -backend-config="../project.tfvars"

@@ -14,8 +14,8 @@ Cloud Platform MVP demo 환경을 위한 인프라 코드 저장소 입니다.
 ## 실행 전 변수 체크
 - `project.tfvars`에 있는 값을 최우선으로 적용합니다.
 - project_name = "mvp-aws-adv"   프로젝트 명 으로 모든 네이밍의 기준이 됩니다.
-- profile      = "skcc"                # aws cli profile 로 셋팅될 name으로 값입니다.
-- bucket       = "skcc.mvp-aws-adv.tfstate"   # 네이밍 룰 : profile.project_name.tfstate 
+- profile      = "miip"                # aws cli profile 로 셋팅될 name으로 값입니다.
+- bucket       = "miip.mvp-aws-adv.tfstate"   # 네이밍 룰 : profile.project_name.tfstate 
 - region       = "ap-northeast-2"
 
 ## EC2 Keypair
@@ -26,7 +26,7 @@ Cloud Platform MVP demo 환경을 위한 인프라 코드 저장소 입니다.
 ## 환경 변수 프로젝트명
 - CI에서 제공 셋팅 되는 환경 변수는 아래와 같습니다. 개인 테스트시에도 아래 환경 변수명으로 설정 해주세요.
 - 프로젝트명
-  - `CP_PROJECT_NAME`=skcc-aws-general
+  - `CP_PROJECT_NAME`=miip-aws-general
 - 클라우드 크리덴셜 및 환경 변수
   - `AWS_ACCESS_KEY_ID`=
   - `AWS_SECRET_ACCESS_KEY`=
@@ -42,11 +42,11 @@ terraform apply tfplan.out
 
 ### project_name
 - `소문자`, `숫자`, `-` 만 사용 가능 (`_`(underbar)쓰면 버킷명 만들때 에러남.)
-- `project_name = "skcc-aws-general"`
+- `project_name = "miip-aws-general"`
 
 ### profile
 - aws cli에서 쓰는 profile name 임. terraform에서 default로 기본 설정된 값을 쓰는 경우를 방지 하기 위해 다른 의도된 계정의 프로파일로 설정
-- 예: `profile = "skcc"`
+- 예: `profile = "miip"`
 
 ### region
 - 자원을 만들 AWS 리전
@@ -55,7 +55,7 @@ terraform apply tfplan.out
 ### bucket
 - tfstate를 저장할 버킷명
 - 네이밍 룰 : `profile`.`project_name`.tfstate 
-- `bucket = "mvp.skcc-aws-general.tfstate"`
+- `bucket = "mvp.miip-aws-general.tfstate"`
 
 ## 실행 순서
 ### 1. 먼저 tf-backend를 생성
@@ -76,8 +76,8 @@ Default region name [ap-northeast-2]:
 Default output format [json]:
 ```
 ### 사용법
-- OSX, Linux Shell : `export AWS_DEFAULT_PROFILE=skcc`
-- Windows Command : `set AWS_DEFAULT_PROFILE=skcc`
+- OSX, Linux Shell : `export AWS_DEFAULT_PROFILE=miip`
+- Windows Command : `set AWS_DEFAULT_PROFILE=miip`
 - Terraform
 ```
 provider "aws" {
