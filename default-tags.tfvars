@@ -1,0 +1,5 @@
+cz_project  = "MIIP Infra AWS"
+cz_stage    = "개발"
+cz_owner    = "MIIP"
+cz_org      = "ATCL"
+cz_extra    = "Terraform"

@@ -1,0 +1,253 @@
+version: 2.1
+
+orbs:
+  slack: circleci/slack@3.4.2
+
+terraform-run: &terraform-run
+  docker:
+    - image: mungi/terraform-aws-k8s
+  working_directory: ~/project
+  steps:
+    - checkout
+    - run:
+        name: Run terraform at ${MODULE_DIR}
+        command: |
+          cd ${MODULE_DIR}; pwd;
+          source ../set_aws_configure.sh
+          terraform init -input=false -backend-config="../project.tfvars"
+          terraform plan -input=false -var-file="../project.tfvars" -var-file="../default-tags.tfvars"  -out tfplan.out
+          terraform apply tfplan.out
+
+ansible-run: &ansible-run
+  docker:
+    - image: mungi/terraform-aws-k8s
+  working_directory: ~/project
+  steps:
+    - checkout
+    - run:
+        command: |
+          cd ${MODULE_DIR}; pwd;
+          source ../set_aws_configure.sh
+          aws eks update-kubeconfig --name ${CLUSTER_NAME} --region $AWS_REGION --profile ${AWS_DEFAULT_PROFILE}
+          ansible-playbook -i inventory ${RUN_FILE}
+
+k8s-run: &k8s-run
+  docker:
+    - image: mungi/terraform-aws-k8s
+  working_directory: ~/project
+  steps:
+    - checkout
+    - run:
+        command: |
+          cd ${MODULE_DIR}; pwd;
+          source ../set_aws_configure.sh
+          aws eks update-kubeconfig --name ${CLUSTER_NAME} --region $AWS_REGION --profile ${AWS_DEFAULT_PROFILE}
+          kubectl apply -f namespace.yaml
+          kubectl apply -f .
+
+jobs:
+  build:
+    docker:
+      - image: mungi/terraform-aws-k8s
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Workflow Start job
+          command: |
+            echo "Workflow Start! - Checking AWS credential"
+            # echo $(pwd)
+            # source ./set_aws_configure.sh
+            # aws sts get-caller-identity --profile ${AWS_DEFAULT_PROFILE}
+
+  demo-tf-backend:
+    environment:
+      MODULE_DIR: tf-backend
+    <<: *terraform-run
+
+  demo-s3:
+    environment:
+      MODULE_DIR: S3
+    <<: *terraform-run
+  
+  demo-common-vpc:
+    environment:
+      MODULE_DIR: common-vpc
+    <<: *terraform-run
+
+  demo-common-efs:
+    environment:
+      MODULE_DIR: common-efs
+    <<: *terraform-run
+
+  demo-common-rds:
+    environment:
+      MODULE_DIR: common-rds
+    <<: *terraform-run
+
+  demo-common-ec2:
+    environment:
+      MODULE_DIR: common-ec2
+    <<: *terraform-run
+
+  demo-pms-vpc:
+    environment:
+      MODULE_DIR: pms-vpc
+    <<: *terraform-run
+
+  demo-pms-rds:
+    environment:
+      MODULE_DIR: pms-rds
+    <<: *terraform-run
+
+  demo-pms-efs:
+    environment:
+      MODULE_DIR: pms-efs
+    <<: *terraform-run
+
+  demo-pms-eks:
+    environment:
+      MODULE_DIR: pms-eks
+      CLUSTER_NAME: pms-d-cluster
+    <<: *terraform-run
+
+  demo-pms-eks-oc:
+    environment:
+      MODULE_DIR: pms-eks-oc
+      CLUSTER_NAME: oc-d-cluster
+    <<: *terraform-run
+
+  demo-pms-elasticsearch:
+    environment:
+      MODULE_DIR: pms-elasticsearch
+    <<: *terraform-run
+
+  demo-pms-ec2:
+    environment:
+      MODULE_DIR: pms-ec2
+    <<: *terraform-run
+
+  demo-pms-waf:
+    environment:
+      MODULE_DIR: pms-waf
+    <<: *terraform-run
+
+  demo-pms-lustre:
+    environment:
+      MODULE_DIR: pms-lustre
+    <<: *terraform-run
+
+  demo-pms-telemetry:
+    environment:
+      MODULE_DIR: pms-telemetry
+      RUN_FILE: deploy_telemetry.yaml
+      CLUSTER_NAME: pms-d-cluster
+    <<: *ansible-run
+
+  demo-pms-logging:
+    environment:
+      MODULE_DIR: pms-logging
+      CLUSTER_NAME: pms-d-cluster
+    <<: *k8s-run
+
+  demo-pms-apps:
+    environment:
+      MODULE_DIR: pms-apps
+      CLUSTER_NAME: pms-d-cluster
+    docker:
+      - image: mungi/terraform-aws-k8s
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          command: |
+            cd ${MODULE_DIR}; pwd;
+            source ../set_aws_configure.sh
+            aws eks update-kubeconfig --name ${CLUSTER_NAME} --region $AWS_REGION --profile ${AWS_DEFAULT_PROFILE}
+
+  demo-notify:
+    docker:
+    - image: mungi/terraform-aws-k8s
+    working_directory: ~/project
+    steps:
+      - slack/notify:
+          channel: 'circle_ci_aws'
+          color: '#3AA3E3'
+          message: Complete deploying AWS DEMO Infra
+          webhook: '${SLACK_WEBHOOK}'
+
+workflows:
+  version: 2
+  demo-pipeline:
+    jobs:
+      # - demo-tf-backend
+      - build
+      # - hold:
+      #     type: approval
+      #     requires:
+      #       - build
+      # - slack/approval-notification:
+      #     requires:
+      #       - build
+### COMMON
+      - demo-s3:
+          requires:
+            - build
+      - demo-common-vpc:
+          requires:
+            - build
+      - demo-common-efs:
+          requires:
+            - demo-common-vpc
+      - demo-common-rds:
+          requires:
+            - demo-common-vpc
+      # - demo-common-ec2:
+      #     requires:
+      #       - demo-common-vpc
+### PMS
+      - demo-pms-vpc:
+          requires:
+            - build
+      - demo-pms-waf:
+          requires:
+            - build
+      - demo-pms-efs:
+          requires:
+            - demo-pms-vpc
+      # - demo-pms-lustre:
+      #     requires:
+      #       - demo-pms-vpc
+      - demo-pms-ec2:
+          requires:
+            - demo-pms-vpc
+      - demo-pms-rds:
+          requires:
+            - demo-pms-vpc
+      - demo-pms-eks:
+          requires:
+            - demo-pms-vpc
+      - demo-pms-eks-oc:
+          requires:
+            - demo-pms-vpc
+      - demo-pms-elasticsearch:
+          requires:
+            - demo-pms-vpc
+      - demo-pms-telemetry:
+          requires:
+            - demo-pms-eks
+      - demo-pms-logging:
+          requires:
+            - demo-pms-eks
+      - demo-pms-apps:
+          requires:
+            - demo-pms-telemetry
+# END NOTIFY
+      - demo-notify:
+          requires:
+            - demo-s3
+            - demo-common-efs
+            - demo-pms-apps
+
+            # - demo-common-ec2
+

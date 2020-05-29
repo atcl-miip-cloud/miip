@@ -1,0 +1,40 @@
+---
+- hosts: localhost
+  gather_facts: false
+
+  vars:
+    ansible_python_interpreter: '{{ ansible_playbook_python }}'
+
+  tasks:
+    ## Create Namespace
+    - name: Create Monitoring namespace
+      k8s:
+        name: monitoring
+        api_version: v1
+        kind: Namespace
+        state: present
+    
+    ## Create Storageclass
+    - name: Check Storageclass Installed
+      command: kubectl get storageclass -n monitoring
+      register: get_storageclass_result
+      changed_when: False
+
+    - name: Create Prometheus StorageClass
+      shell: "kubectl create -f telemetry_storageclass.yaml -n monitoring"
+      args:
+        executable: /bin/bash
+      when: "'telemetry-storageclass' not in get_storageclass_result.stdout"
+
+    ## Create Prometheus-operator using Helm
+
+    - name: Check Prometheus Installed
+      command: helm list -n monitoring
+      register: helm_list_prometheus_result
+      changed_when: False
+
+    - name: Install Prometheus with Helm.
+      shell: "helm install prometheus --namespace monitoring prometheus-operator/"
+      args:
+        executable: /bin/bash
+      when: "'prometheus' not in helm_list_prometheus_result.stdout"
