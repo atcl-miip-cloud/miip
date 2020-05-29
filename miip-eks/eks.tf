@@ -65,7 +65,7 @@ data "aws_eks_cluster_auth" "mvp-eks" {
 module "mvp-eks" {
   source          = "terraform-aws-modules/eks/aws"
   cluster_version = "1.16"
-  cluster_name    = local.pms_eks_name
+  cluster_name    = local.miip_eks_name
   vpc_id          = data.aws_vpc.mvp-eks.id
   subnets         = [for s in data.aws_subnet.mvp-eks-priv : s.id]
 

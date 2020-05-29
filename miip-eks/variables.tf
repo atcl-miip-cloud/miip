@@ -103,7 +103,7 @@ variable "map_users" {
 
 locals {
   vpc_name = "${var.project_name}-vpc"
-  pms_eks_name = "pms-d-cluster"
+  miip_eks_name = "miip-d-cluster"
 
   ec2_keypair = "${var.project_name}-default-keypair"
 

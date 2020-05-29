@@ -73,7 +73,7 @@ resource "aws_s3_bucket" "tamrdev2" {
 }
 
 resource "aws_s3_bucket" "dotsweb" {
-  bucket = "skbm-pms-d-dotsweb-public-${random_string.suffix.result}"
+  bucket = "skbm-miip-d-dotsweb-public-${random_string.suffix.result}"
   acl    = "private"
   tags   = {
     "cz.project" = var.cz_project
@@ -111,7 +111,7 @@ POLICY
 }
 
 resource "aws_s3_bucket" "dots" {
-  bucket = "skbm-pms-d-dots-private-${random_string.suffix.result}"
+  bucket = "skbm-miip-d-dots-private-${random_string.suffix.result}"
   acl    = "private"
   tags   = {
     "cz.project" = var.cz_project

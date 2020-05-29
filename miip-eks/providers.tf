@@ -7,7 +7,7 @@ provider "aws" {
 terraform {
   required_version = ">= 0.12.0"
   backend "s3" {
-    key            = "project/eks-pms.tfstate"
+    key            = "project/eks-miip.tfstate"
     encrypt        = true
     acl            = "bucket-owner-full-control"
   }

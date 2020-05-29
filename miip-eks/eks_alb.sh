@@ -3,7 +3,7 @@ export CP_PROJECT_NAME=$(grep -o '^[^#]*' ../project.tfvars | awk -F "=" '/proje
 export AWS_DEFAULT_REGION=$(grep -o '^[^#]*' ../project.tfvars | awk -F "=" '/region/{print $2}'| sed 's/[" ]//g')
 export AWS_REGION=$AWS_DEFAULT_REGION
 export AWS_DEFAULT_PROFILE=$(grep -o '^[^#]*' ../project.tfvars | awk -F "=" '/profile/{print $2}'| sed 's/[" ]//g')
-export CLUSTER_NAME=${CP_PROJECT_NAME}-pms-cluster
+export CLUSTER_NAME=${CP_PROJECT_NAME}-miip-cluster
 
 AWS_AIC_VER=v1.1.7
 ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)

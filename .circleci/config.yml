@@ -90,70 +90,70 @@ jobs:
       MODULE_DIR: common-ec2
     <<: *terraform-run
 
-  demo-pms-vpc:
+  demo-miip-vpc:
     environment:
-      MODULE_DIR: pms-vpc
+      MODULE_DIR: miip-vpc
     <<: *terraform-run
 
-  demo-pms-rds:
+  demo-miip-rds:
     environment:
-      MODULE_DIR: pms-rds
+      MODULE_DIR: miip-rds
     <<: *terraform-run
 
-  demo-pms-efs:
+  demo-miip-efs:
     environment:
-      MODULE_DIR: pms-efs
+      MODULE_DIR: miip-efs
     <<: *terraform-run
 
-  demo-pms-eks:
+  demo-miip-eks:
     environment:
-      MODULE_DIR: pms-eks
-      CLUSTER_NAME: pms-d-cluster
+      MODULE_DIR: miip-eks
+      CLUSTER_NAME: miip-d-cluster
     <<: *terraform-run
 
-  demo-pms-eks-oc:
+  demo-miip-eks-oc:
     environment:
-      MODULE_DIR: pms-eks-oc
+      MODULE_DIR: miip-eks-oc
       CLUSTER_NAME: oc-d-cluster
     <<: *terraform-run
 
-  demo-pms-elasticsearch:
+  demo-miip-elasticsearch:
     environment:
-      MODULE_DIR: pms-elasticsearch
+      MODULE_DIR: miip-elasticsearch
     <<: *terraform-run
 
-  demo-pms-ec2:
+  demo-miip-ec2:
     environment:
-      MODULE_DIR: pms-ec2
+      MODULE_DIR: miip-ec2
     <<: *terraform-run
 
-  demo-pms-waf:
+  demo-miip-waf:
     environment:
-      MODULE_DIR: pms-waf
+      MODULE_DIR: miip-waf
     <<: *terraform-run
 
-  demo-pms-lustre:
+  demo-miip-lustre:
     environment:
-      MODULE_DIR: pms-lustre
+      MODULE_DIR: miip-lustre
     <<: *terraform-run
 
-  demo-pms-telemetry:
+  demo-miip-telemetry:
     environment:
-      MODULE_DIR: pms-telemetry
+      MODULE_DIR: miip-telemetry
       RUN_FILE: deploy_telemetry.yaml
-      CLUSTER_NAME: pms-d-cluster
+      CLUSTER_NAME: miip-d-cluster
     <<: *ansible-run
 
-  demo-pms-logging:
+  demo-miip-logging:
     environment:
-      MODULE_DIR: pms-logging
-      CLUSTER_NAME: pms-d-cluster
+      MODULE_DIR: miip-logging
+      CLUSTER_NAME: miip-d-cluster
     <<: *k8s-run
 
-  demo-pms-apps:
+  demo-miip-apps:
     environment:
-      MODULE_DIR: pms-apps
-      CLUSTER_NAME: pms-d-cluster
+      MODULE_DIR: miip-apps
+      CLUSTER_NAME: miip-d-cluster
     docker:
       - image: mungi/terraform-aws-k8s
     working_directory: ~/project
@@ -205,49 +205,49 @@ workflows:
       # - demo-common-ec2:
       #     requires:
       #       - demo-common-vpc
-### PMS
-      - demo-pms-vpc:
+### miip
+      - demo-miip-vpc:
           requires:
             - build
-      - demo-pms-waf:
+      - demo-miip-waf:
           requires:
             - build
-      - demo-pms-efs:
+      - demo-miip-efs:
           requires:
-            - demo-pms-vpc
-      # - demo-pms-lustre:
+            - demo-miip-vpc
+      # - demo-miip-lustre:
       #     requires:
-      #       - demo-pms-vpc
-      - demo-pms-ec2:
+      #       - demo-miip-vpc
+      - demo-miip-ec2:
           requires:
-            - demo-pms-vpc
-      - demo-pms-rds:
+            - demo-miip-vpc
+      - demo-miip-rds:
           requires:
-            - demo-pms-vpc
-      - demo-pms-eks:
+            - demo-miip-vpc
+      - demo-miip-eks:
           requires:
-            - demo-pms-vpc
-      - demo-pms-eks-oc:
+            - demo-miip-vpc
+      - demo-miip-eks-oc:
           requires:
-            - demo-pms-vpc
-      - demo-pms-elasticsearch:
+            - demo-miip-vpc
+      - demo-miip-elasticsearch:
           requires:
-            - demo-pms-vpc
-      - demo-pms-telemetry:
+            - demo-miip-vpc
+      - demo-miip-telemetry:
           requires:
-            - demo-pms-eks
-      - demo-pms-logging:
+            - demo-miip-eks
+      - demo-miip-logging:
           requires:
-            - demo-pms-eks
-      - demo-pms-apps:
+            - demo-miip-eks
+      - demo-miip-apps:
           requires:
-            - demo-pms-telemetry
+            - demo-miip-telemetry
 # END NOTIFY
       - demo-notify:
           requires:
             - demo-s3
             - demo-common-efs
-            - demo-pms-apps
+            - demo-miip-apps
 
             # - demo-common-ec2
 

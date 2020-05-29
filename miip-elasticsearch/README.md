@@ -14,7 +14,7 @@ git clone https://github.com/miip/mvp-demo-aws.git (private)
 git user ID : 입력
 git user PW : 입력
 
-cd mvp-demo-aws/pms-logging
+cd mvp-demo-aws/miip-logging
 
 kubectl create ns logging
 

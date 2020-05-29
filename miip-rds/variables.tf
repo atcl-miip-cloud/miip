@@ -13,7 +13,7 @@ variable "cz_extra" {}
 #############################################################################
 
 locals {
-  vpc_name     = "${var.project_name}-vpc"
-  pms_eks_name = "pms-d-cluster"
-  oc_eks_name  = "oc-d-cluster"
+  vpc_name       = "${var.project_name}-vpc"
+  rds_identifier = "miip-d-maria"
+  rds_db_name = "demodb"
 }

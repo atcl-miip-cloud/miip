@@ -35,7 +35,7 @@ module "vpc-mvp" {
     "cz.owner"                                    = var.cz_owner
     "cz.org"                                      = var.cz_org
     "cz.extra"                                    = var.cz_extra
-    "kubernetes.io/cluster/${local.pms_eks_name}" = "shared",
+    "kubernetes.io/cluster/${local.miip_eks_name}" = "shared",
     "kubernetes.io/cluster/${local.oc_eks_name}"  = "shared",
   }
 

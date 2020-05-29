@@ -1,5 +1,5 @@
 # EFS File System with tags & lifecycle policy
-resource "aws_efs_file_system" "pms-d-accu-efs-vol1" {
+resource "aws_efs_file_system" "miip-d-accu-efs-vol1" {
   performance_mode = "generalPurpose"
   throughput_mode  = "bursting"
   lifecycle_policy {
@@ -38,9 +38,9 @@ data "aws_region" "current" {}
 data "aws_availability_zones" "available" {}
 
 
-resource "aws_efs_mount_target" "pms-efs-tg" {
+resource "aws_efs_mount_target" "miip-efs-tg" {
   count          = length([for s in data.aws_subnet.mvp-priv : s.id])
-  file_system_id = aws_efs_file_system.pms-d-accu-efs-vol1.id
+  file_system_id = aws_efs_file_system.miip-d-accu-efs-vol1.id
   subnet_id      = element([for s in data.aws_subnet.mvp-priv : s.id], count.index)
   # security_groups = ["${aws_security_group.efs-sg.id}"]
 }

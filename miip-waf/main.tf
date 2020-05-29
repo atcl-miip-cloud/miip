@@ -7,7 +7,7 @@ module "owasp_top_10" {
   # https://github.com/traveloka/terraform-aws-waf-owasp-top-10-rules/blob/master/variables.tf
 
   product_domain                 = "skcloudplatform.com"
-  service_name                   = "pms"
+  service_name                   = "miip"
   environment                    = "dev"
   description                    = "OWASP Top 10 rules for tsiwaf"
   target_scope                   = "global"
